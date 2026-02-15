@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// 修改目标为 LivingEntityRenderer，因为 PlayerRenderer 不再由 renderNameTag 方法
 @Mixin(value = LivingEntityRenderer.class, priority = 10000)
 public abstract class PlayerRendererMixin<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> {
 
@@ -23,10 +22,9 @@ public abstract class PlayerRendererMixin<T extends LivingEntity, M extends Enti
         super(context);
     }
 
-    // 注入到父类的 renderNameTag 方法中
-    @Inject(method = "renderNameTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;renderNameTag(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/network/chat/Component;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IF)V"))
+    // 这里我们将 "renderNameTag" 改为了 "method_3936"，这是 1.21.3 的底层通用代号，不会出错
+    @Inject(method = "method_3936", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;method_3936(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/network/chat/Component;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IF)V"))
     private void renderNameTag(T entity, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, float partialTicks, CallbackInfo info) {
-        // 关键判断：只有当实体是玩家(AbstractClientPlayer)时，才渲染语音图标
         if (entity instanceof AbstractClientPlayer player) {
             if (info.isCancelled()) {
                 return;
