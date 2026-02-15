@@ -1,0 +1,35 @@
+name: Build Fabric 1.21.3
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (拉取代码)
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (配置 Java 21)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew (赋予执行权限)
+        run: chmod +x gradlew
+
+      - name: Build Fabric (开始构建 Fabric 版本)
+        run: ./gradlew :fabric:build --stacktrace
+
+      - name: Upload Artifact (上传构建好的 Jar 包)
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceChat-Fabric-1.21.3-Build
+          path: fabric/build/libs/*.jar
+          if-no-files-found: warn
