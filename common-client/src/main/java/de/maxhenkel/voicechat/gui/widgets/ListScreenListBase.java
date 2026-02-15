@@ -12,7 +12,7 @@ public abstract class ListScreenListBase<T extends ListScreenEntryBase<T>> exten
 
     public void updateSize(int width, int height, int x, int y){
         setRectangle(width, height, x, y);
-        refreshScrollAmount();
+        this.setScrollAmount(this.getScrollAmount());
     }
 
     @Override
